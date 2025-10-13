@@ -1,27 +1,6 @@
-{%load static%}
+{% extends 'main/layout.html' %}
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Склад - Управление вашим складом онлайн</title>
-    <link rel="stylesheet" href="{%static 'main/css/home.css'%}">
-</head>
-<body>
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">📦</span>
-                <span>Мой Склад</span>
-            </div>
-            <nav class="auth-links">
-                <a href="/login" class="login">Войти</a>
-                <a href="/register" class="register">Регистрация</a>
-            </nav>
-        </div>
-    </header>
-
+    {% block content %}
     <section class="hero">
         <div class="container">
             <h1>Управляйте вашим складом с легкостью</h1>
@@ -77,5 +56,8 @@
             <p>© 2025 Мой Склад. Все права защищены.</p>
         </div>
     </footer>
-</body>
-</html>
+
+    {% endblock %}
+
+
+
