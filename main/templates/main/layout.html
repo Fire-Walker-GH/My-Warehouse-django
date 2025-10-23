@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой Склад - Управление вашим складом онлайн</title>
-    <link rel="stylesheet" href="{%static 'main/css/home.css'%}">
+    <link rel="stylesheet" href="{%static 'main/css/layout.css'%}">
 </head>
 <body>
     <header>
@@ -16,8 +16,13 @@
                 <span>Мой Склад</span>
             </div>
             <nav class="auth-links">
-                <a href="/login" class="login">Войти</a>
-                <a href="{% url 'register' %}" class="register">Регистрация</a>
+                {% if request.user.is_authenticated %}
+                    <span>{{ request.user.username }}</span>
+                    <a href="{% url 'logout' %}" class="btn">Выйти</a>
+                {% else %}
+                    <a href="/login" class="login">Войти</a>
+                    <a href="{% url 'register' %}" class="register">Регистрация</a>
+                {% endif %}
             </nav>
         </div>
     </header>
