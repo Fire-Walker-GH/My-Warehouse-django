@@ -1,0 +1,30 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'main/css/add_warehouse.css'%}">
+
+<div class="warehouse-form-container">
+    <h2>Добавление нового склада</h2>
+    <form method="post" class="warehouse-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="warehouse_name">Название склада*</label>
+            <input type="text" id="warehouse_name" name="warehouse_name" required placeholder="Введите название склада">
+        </div>
+        
+        <div class="form-group">
+            <label for="address">Адрес*</label>
+            <textarea id="address" name="address" rows="3" required placeholder="Введите полный адрес склада"></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">Сохранить</button>
+            <button type="reset" class="cancel-btn">Очистить</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

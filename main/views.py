@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
+from .models import Warehouse
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -34,3 +36,22 @@ def user_login(request):
 def user_logout(request):
      logout(request)
      return redirect('home')
+     
+
+@login_required  # Если нужно, чтобы только авторизованные пользователи могли добавлять склады
+def add_warehouse(request):
+    if request.method == 'POST':
+        # Получаем данные из формы
+        name = request.POST.get('warehouse_name')
+        address = request.POST.get('address')
+        user_id = request.user.id  # Получаем ID текущего пользователя
+
+        # Создаем и сохраняем новый склад в базе данных
+        Warehouse.objects.create(
+            name=name,
+            address=address,
+            user_id=user_id
+        )
+        return redirect('home')  # Перенаправляем на страницу со списком складов
+
+    return render(request, 'main/add_warehouse.html')
