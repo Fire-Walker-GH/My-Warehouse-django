@@ -6,11 +6,24 @@
 <link rel="stylesheet" href="{% static 'main/css/home.css' %}">
 
 {% if request.user.is_authenticated %}
-    <div class="warehouse-block">
-            <h2>У вас нет добавленных складов</h2>
-            <button class="add-warehouse-btn">Добавить</button>
+    {% if user_warehouses %}
+        <div class="warehouse-block">
+            <h2>Ваши склады</h2>
+            {% for warehouse in user_warehouses %}
+                <div class="warehouse-item">
+                    <h3 class="warehouse-name">{{ warehouse.name }}</h3>
+                    <p class="warehouse-address">{{ warehouse.address }}</p>
+                    <a href="{% url 'items_list' warehouse_id=warehouse.id %}" class="open-the-warehouse-bth">Перейти на склад</a>
+                </div>
+            {% endfor %}
         </div>
-{% else %}
+    {% else %}
+        <div class="warehouse-block">
+            <h2>У вас нет добавленных складов</h2>
+            <a href="{% url 'add_warehouse' %}" class="add-warehouse-btn">Добавить</a>
+        </div>
+    {% endif %}
+{% else %} 
     <section class="hero">
         <div class="container">
             <h1>Управляйте вашим складом с легкостью</h1>

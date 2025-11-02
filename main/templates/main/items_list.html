@@ -1,0 +1,21 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="items-list">
+    <h2>Предметы на складе: {{ warehouse.name }}</h2>
+    {% if items %}
+        <div class="items-grid">
+            {% for item in items %}
+                <div class="item-card">
+                    <h3>{{ item.name }}</h3>
+                    <p>{{ item.description }}</p>
+                    <p>Количество: {{ item.quantity }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-message">Склад пуст</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -95,7 +95,7 @@
     margin-bottom: 0.5rem;
 }
 
-/* Footer */
+
 footer {
     background-color: #2c3e50;
     color: white;
@@ -125,6 +125,25 @@ footer {
 
 .add-warehouse-btn:hover {
     background-color: #0056b3;
+}
+
+.warehouse-name {
+    margin: 20px;
+}
+
+.warehouse-address {
+    margin: 20px;
+}
+
+.open-the-warehouse-bth {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
 }
 
 

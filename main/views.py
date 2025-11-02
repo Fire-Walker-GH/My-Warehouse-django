@@ -1,12 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Warehouse
+from django.core.exceptions import PermissionDenied
+from .models import Warehouse, Item
 from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-    return render(request, 'main/home.html')
+    if request.user.is_authenticated:
+        user_warehouses = Warehouse.objects.filter(user_id=request.user.id)
+    else:
+        user_warehouses = None
+
+    return render(request, 'main/home.html', {'user_warehouses': user_warehouses})
 
 def user_register(request):
     if request.method == 'POST':
@@ -55,3 +61,13 @@ def add_warehouse(request):
         return redirect('home')  # Перенаправляем на страницу со списком складов
 
     return render(request, 'main/add_warehouse.html')
+
+
+def items_list(request, warehouse_id):
+    warehouse = get_object_or_404(Warehouse, id=warehouse_id)
+
+    if warehouse.user != request.user:
+        raise PermissionDenied("У вас нет доступа к этому складу")
+    
+    items = Item.objects.filter(warehouse=warehouse)
+    return render(request, 'main/items_list.html', {'warehouse': warehouse, 'items': items})
