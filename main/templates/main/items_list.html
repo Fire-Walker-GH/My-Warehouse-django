@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'main/css/items_list.css' %}">
+
 <div class="items-list">
-    <h2>Предметы на складе: {{ warehouse.name }}</h2>
+    <h2 class="items-in-warehouse-text">Предметы на складе: {{ warehouse.name }}</h2>
     {% if items %}
         <div class="items-grid">
             {% for item in items %}
@@ -11,11 +13,119 @@
                     <h3>{{ item.name }}</h3>
                     <p>{{ item.description }}</p>
                     <p>Количество: {{ item.quantity }}</p>
+                     <div class="card-buttons">
+                        <button 
+                        class="edit-btn" 
+                        onclick="openEditModal(
+                            '{{ warehouse.id|escapejs }}', 
+                            '{{ item.id|escapejs }}', 
+                            '{{ item.name|escapejs }}', 
+                            '{{ item.description|escapejs }}', 
+                            '{{ item.quantity|escapejs }}'
+                        )"
+                    >
+                        Редактировать
+                    </button>
+
+                        <form action="{% url 'delete_item' warehouse.id item.id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn">Удалить</button>
+                        </form>
+                    </div>
+
+                    <div id="edit-form-{{ item.id }}" class="edit-form" style="display:none;">
+                        <h3>Редактировать предмет</h3>
+                        <form action="{% url 'edit_item' warehouse.id item.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="warehouse_id" value="{{ warehouse.id }}">
+                            
+                            <label for="item-name-{{ item.id }}">Название:</label>
+                            <input type="text" id="item-name-{{ item.id }}" name="item-name" value="{{ item.name }}" maxlength="100" required>
+                            
+                            <label for="item-description-{{ item.id }}">Описание:</label>
+                            <textarea id="item-description-{{ item.id }}" name="item-description" maxlength="100">{{ item.description }}</textarea>
+                            
+                            <label for="item-quantity-{{ item.id }}">Количество:</label>
+                            <input type="number" id="item-quantity-{{ item.id }}" name="item-quantity" value="{{ item.quantity }}" min="0" required>
+                            
+                            <button type="submit">Сохранить</button>
+                            <button type="button" onclick="closeEditForm('{{ item.id }}')">Отмена</button>
+                        </form>
+                    </div>
+
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <p class="empty-message">Склад пуст</p>
     {% endif %}
+
+    <button id="add-item-btn" class="fixed-btn">Добавить предмет</button>
+
+    <div id="edit-item-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeEditModal()">&times;</span>
+        <h3>Редактировать предмет</h3>
+        <form id="edit-item-form" method="post">
+            {% csrf_token %}
+            
+            <label for="modal-item-name">Название:</label>
+            <input type="text" id="modal-item-name" name="name" maxlength="100" required>
+            
+            <label for="modal-item-description">Описание:</label>
+            <textarea id="modal-item-description" name="description" maxlength="100"></textarea>
+            
+            <label for="modal-item-quantity">Количество:</label>
+            <input type="number" id="modal-item-quantity" name="quantity" min="0" required>
+            
+            <button type="submit">Сохранить</button>
+            <button type="button" onclick="closeEditModal()">Отмена</button>
+        </form>
+    </div>
+    
+</div>
+
+<script>
+    document.getElementById('add-item-btn').addEventListener('click', function() {
+        document.getElementById('add-item-form').style.display = 'block';
+    });
+
+    document.getElementById('cancel-btn').addEventListener('click', function() {
+        document.getElementById('add-item-form').style.display = 'none';
+    });
+
+    function confirmDelete() {
+        return confirm("Вы уверены, что хотите удалить этот предмет?");
+    }
+
+    function openEditModal(warehouseId, itemId, name, description, quantity) {
+        const modal = document.getElementById('edit-item-modal');
+        const form = document.getElementById('edit-item-form');
+        
+        document.getElementById('modal-item-name').value = name;
+        document.getElementById('modal-item-description').value = description;
+        document.getElementById('modal-item-quantity').value = quantity;
+
+        const url = `/warehouse/${warehouseId}/items/edit/${itemId}/`;
+        form.action = url;
+        
+        modal.style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-item-modal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('edit-item-modal');
+        if (event.target == modal) {
+            closeEditModal();
+        }
+    }
+
+
+</script>
+
+
 </div>
 {% endblock %}

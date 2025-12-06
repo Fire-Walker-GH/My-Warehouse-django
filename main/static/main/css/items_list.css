@@ -1,16 +1,13 @@
 .items-list {
     max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .items-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr; /* Один элемент в ряду */
+    gap: 20px; /* Отступ между элементами */
     margin-top: 20px;
 }
 
@@ -20,6 +17,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     transition: box-shadow 0.3s;
+    position: relative;
 }
 
 .item-card:hover {
@@ -35,9 +33,183 @@
     margin: 5px 0;
 }
 
+.card-buttons {
+    position: absolute; /* Фиксированное позиционирование внутри карточки */
+    right: 10px; /* Отступ справа */
+    bottom: 10px; /* Отступ снизу */
+    display: flex;
+    gap: 10px; /* Отступ между кнопками */
+}
+
+.card-buttons button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.card-buttons .edit-btn {
+    background-color: #ffc107; /* Желтый цвет для кнопки "Редактировать" */
+    color: #000;
+}
+
+.card-buttons .edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.card-buttons .delete-btn {
+    background-color: #be1010; /* Голубой цвет для кнопки "Изменить" */
+    color: #fff;
+}
+
+.card-buttons .delete-btn:hover {
+    background-color: #be1010;
+}
+
 .empty-message {
     text-align: center;
     font-size: 18px;
     color: #666;
     margin-top: 20px;
+}
+
+/* Фиксированная кнопка */
+.fixed-btn {
+    position: fixed;
+    right: 15px;
+    bottom: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+.fixed-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Контейнер формы */
+.form-container {
+    display: none; /* Форма скрыта по умолчанию */
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    width: 300px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Стили для формы */
+.form-container h3 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-container input,
+.form-container textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-container button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.form-container button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.form-container button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.form-container #cancel-btn {
+    background-color: #dc3545;
+    color: white;
+    margin-left: 10px;
+}
+
+.form-container #cancel-btn:hover {
+    background-color: #c82333;
+}
+
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Оставаться на месте */
+    z-index: 1; /* Сидеть поверх всего */
+    left: 0;
+    top: 0;
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    overflow: auto; /* Включить прокрутку, если нужно */
+    background-color: rgb(0,0,0); /* Цвет фона */
+    background-color: rgba(0,0,0,0.4); /* Черный с прозрачностью */
+}
+
+/* Содержимое модального окна */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% сверху и по центру */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Может быть меньше или больше */
+    max-width: 500px; /* Ограничение по ширине */
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Кнопка закрытия */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Стили для формы внутри модального окна */
+#edit-item-form label, 
+#edit-item-form input[type="text"], 
+#edit-item-form textarea, 
+#edit-item-form input[type="number"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+#edit-item-form textarea {
+    resize: vertical;
 }
