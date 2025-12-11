@@ -6,7 +6,15 @@
 {# Предполагается, что стили для модальных окон находятся в items_list.css или подключены отдельно #}
 
 <div class="items-list">
-    <h2 class="items-in-warehouse-text">Предметы на складе: {{ warehouse.name }}</h2>
+    <div class="items-list-header">
+        <h2 class="items-in-warehouse-text">Предметы на складе: {{ warehouse.name }}</h2>
+    
+        <form method="get" class="search-form">
+            <input type="text" name="q" placeholder="Поиск предметов..." value="{{ request.GET.q|default:'' }}">
+            <button type="submit">Найти</button>
+        </form>
+    </div>
+
     {% if items %}
         <div class="items-grid">
             {% for item in items %}
@@ -45,10 +53,10 @@
                             <input type="hidden" name="warehouse_id" value="{{ warehouse.id }}">
                             
                             <label for="item-name-{{ item.id }}">Название:</label>
-                            <input type="text" id="item-name-{{ item.id }}" name="item-name" value="{{ item.name }}" maxlength="100" required>
+                            <input type="text" id="item-name-{{ item.id }}" name="item-name" value="{{ item.name }}" maxlength="70" required>
                             
                             <label for="item-description-{{ item.id }}">Описание:</label>
-                            <textarea id="item-description-{{ item.id }}" name="item-description" maxlength="100">{{ item.description }}</textarea>
+                            <textarea id="item-description-{{ item.id }}" name="item-description" maxlength="90">{{ item.description }}</textarea>
                             
                             <label for="item-quantity-{{ item.id }}">Количество:</label>
                             <input type="number" id="item-quantity-{{ item.id }}" name="item-quantity" value="{{ item.quantity }}" min="0" required>
@@ -76,10 +84,10 @@
                 {% csrf_token %}
                 
                 <label for="add-item-name">Название:</label>
-                <input type="text" id="add-item-name" name="name" maxlength="100" required>
+                <input type="text" id="add-item-name" name="name" maxlength="70" required>
                 
                 <label for="add-item-description">Описание:</label>
-                <textarea id="add-item-description" name="description" maxlength="100"></textarea>
+                <textarea id="add-item-description" name="description" maxlength="90"></textarea>
                 
                 <label for="add-item-quantity">Количество:</label>
                 <input type="number" id="add-item-quantity" name="quantity" min="0" required>
@@ -128,6 +136,31 @@
         </div>
     </div>
 
+</div>
+
+<div class="pagination-container">
+    <div class="pagination-left">
+        {# Кнопки "первая" и "предыдущая" #}
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}">&laquo; первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">предыдущая</a>
+        {% endif %}
+    </div>
+
+    <div class="pagination-center">
+        {# Текущий номер страницы #}
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+    </div>
+
+    <div class="pagination-right">
+        {# Кнопки "следующая" и "последняя" #}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}">последняя &raquo;</a>
+        {% endif %}
+    </div>
 </div>
 
 <script>

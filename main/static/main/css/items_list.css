@@ -4,6 +4,43 @@
     padding: 0 20px;
 }
 
+.items-list-header {
+    display: flex; /* Включаем Flexbox */
+    justify-content: space-between; /* Разносим элементы по краям */
+    align-items: center; /* Выравниваем элементы по вертикали */
+    margin-bottom: 20px;
+    padding-top: 10px;
+}
+
+/* 2. Стилизация формы поиска */
+.search-form {
+    display: flex;
+    gap: 5px; /* Небольшой отступ между полем ввода и кнопкой */
+}
+
+.search-form input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 200px; /* Фиксированная ширина для поля ввода */
+}
+
+.search-form button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
 .items-grid {
     display: grid;
     grid-template-columns: 1fr; /* Один элемент в ряду */
@@ -309,7 +346,7 @@
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 50px;
+    border-radius: 30px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -342,4 +379,64 @@
         padding: 12px 24px;
         font-size: 14px;
     }
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between; /* Разносит элементы по краям */
+    align-items: center; /* Выравнивает по вертикали */
+    
+    margin-top: 30px; 
+    padding: 20px 0; /* Убираем горизонтальный padding, чтобы кнопки были у краев */
+    border-top: 1px solid #e0e0e0; 
+    
+    /* Ограничиваем ширину, чтобы центрирование работало корректно */
+    max-width: 1200px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 2. Контейнеры для кнопок */
+.pagination-left {
+    /* Выравнивание кнопок по левому краю */
+    text-align: left;
+}
+
+.pagination-right {
+    /* Выравнивание кнопок по правому краю */
+    text-align: right;
+}
+
+/* 3. Контейнер для номера страницы */
+.pagination-center {
+    /* Номер страницы будет автоматически центрирован благодаря space-between */
+    flex-grow: 1; /* Позволяет центру занять доступное пространство */
+    text-align: center;
+}
+
+/* 4. Общие стили для ссылок (кнопок) */
+.pagination-container a {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 0 4px;
+    text-decoration: none;
+    color: #007bff; 
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-container a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 5. Стилизация текущего номера страницы */
+.pagination-center .current {
+    font-weight: bold;
+    color: #333;
+    padding: 8px 15px;
+    /* Убираем рамку и фон, чтобы это был просто центрированный текст */
+    border: none;
+    background: none;
 }

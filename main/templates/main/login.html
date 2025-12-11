@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="{% static 'main/css/login.css' %}">
 
 <div class="login-container">
-    <h2>Вход</h2>
+    <h2>Вход в систему</h2>
+    <h3>Пожалуйста, введите логин и пароль</h3>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

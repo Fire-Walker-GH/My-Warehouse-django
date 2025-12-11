@@ -5,8 +5,11 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from .models import Warehouse, Item
 from django.contrib.auth.decorators import login_required
-from .forms import ItemForm
+from .forms import ItemForm, CustomAuthenticationForm
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
 
 
 
@@ -31,7 +34,7 @@ def user_register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request.POST, data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST) 
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -40,7 +43,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('home')
     else:
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
     return render(request, 'main/login.html', {'form': form})
 
 def user_logout(request):
@@ -71,8 +74,44 @@ def items_list(request, warehouse_id):
     if warehouse.user != request.user:
         raise PermissionDenied("У вас нет доступа к этому складу")
     
-    items = Item.objects.filter(warehouse=warehouse)
-    return render(request, 'main/items_list.html', {'warehouse': warehouse, 'items': items})
+    # 1. Получаем базовый QuerySet предметов для склада
+    all_items = Item.objects.filter(warehouse=warehouse)
+    
+    # 2. ЛОГИКА ПОИСКА
+    search_query = request.GET.get('q')
+    if search_query:
+        # Фильтруем QuerySet по названию, используя icontains (регистронезависимый поиск)
+        all_items = all_items.filter(name__icontains=search_query)
+        
+    # Сортируем QuerySet (важно делать это после фильтрации)
+    all_items = all_items.order_by('name')
+    
+    # 3. ЛОГИКА ПАГИНАЦИИ
+    items_per_page = 4 # 4 предмета на страницу
+    paginator = Paginator(all_items, items_per_page)
+    
+    # Получаем номер текущей страницы из GET-параметра 'page'
+    page_number = request.GET.get('page', 1)
+    
+    try:
+        # Получаем объект Page для запрошенной страницы
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # Если номер страницы не целое число, показываем первую страницу
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # Если номер страницы вне диапазона, показываем последнюю
+        page_obj = paginator.page(paginator.num_pages)
+    
+    # 4. КОНТЕКСТ
+    context = {
+        'warehouse': warehouse,
+        'page_obj': page_obj, 
+        'items': page_obj.object_list, 
+        'search_query': search_query or '', # Передаем поисковый запрос обратно в шаблон
+    }
+    
+    return render(request, 'main/items_list.html', context)
 
 def add_item(request, warehouse_id):
     # Эта функция должна обрабатывать только POST-запросы

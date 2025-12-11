@@ -29,9 +29,18 @@
         </div>
     </header>
 
-    {% block content %}
+    {# Оборачиваем блок content в тег <main> для семантики и стилизации #}
+    <main class="container">
+        {% block content %}
 
-    {% endblock %}
+        {% endblock %}
+    </main>
+
+    <footer>
+    <div class="container">
+        <p>© 2025 Мой Склад. Все права защищены.</p>
+    </div>
+    </footer>
     
 </body>
 </html>
