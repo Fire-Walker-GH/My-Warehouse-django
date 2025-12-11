@@ -74,31 +74,42 @@ def items_list(request, warehouse_id):
     items = Item.objects.filter(warehouse=warehouse)
     return render(request, 'main/items_list.html', {'warehouse': warehouse, 'items': items})
 
-def items_list(request, warehouse_id):
-    warehouse = Warehouse.objects.get(id=warehouse_id)
-    items = warehouse.items.all()
-
+def add_item(request, warehouse_id):
+    # Эта функция должна обрабатывать только POST-запросы
     if request.method == 'POST':
-        name = request.POST.get('item-name')
-        description = request.POST.get('item-description')
-        quantity = request.POST.get('item-quantity')
+        # Используем get_object_or_404 для лучшей обработки ошибок
+        warehouse = get_object_or_404(Warehouse, id=warehouse_id)
+        
+        # Используем имена полей из формы модального окна, которую я вам предоставил (name, description, quantity)
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        quantity = request.POST.get('quantity')
 
+        # Базовая валидация
         if name and quantity:
-            Item.objects.create(
-                name=name,
-                description=description,
-                quantity=quantity,
-                warehouse=warehouse
-            )
-            messages.success(request, 'Предмет успешно добавлен!')
-            return redirect('items_list', warehouse_id=warehouse_id)
+            try:
+                # Преобразование количества в целое число
+                quantity = int(quantity)
+                
+                Item.objects.create(
+                    name=name,
+                    description=description,
+                    quantity=quantity,
+                    warehouse=warehouse
+                )
+                messages.success(request, 'Предмет успешно добавлен!')
+            except ValueError:
+                messages.error(request, 'Количество должно быть целым числом.')
+            except Exception as e:
+                messages.error(request, f'Произошла ошибка при добавлении: {e}')
         else:
-            messages.error(request, 'Пожалуйста, заполните все обязательные поля.')
+            messages.error(request, 'Пожалуйста, заполните все обязательные поля (Название и Количество).')
 
-    return render(request, 'main/items_list.html', {
-        'warehouse': warehouse,
-        'items': items
-    })
+        # После обработки запроса всегда перенаправляем пользователя обратно на страницу списка
+        return redirect('items_list', warehouse_id=warehouse_id)
+    
+    # Если кто-то попытается перейти по этому URL через GET-запрос, перенаправляем его
+    return redirect('items_list', warehouse_id=warehouse_id)
 
 def delete_item(request, warehouse_id, item_id):
     item = get_object_or_404(Item, id=item_id)

@@ -3,6 +3,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'main/css/items_list.css' %}">
+{# Предполагается, что стили для модальных окон находятся в items_list.css или подключены отдельно #}
 
 <div class="items-list">
     <h2 class="items-in-warehouse-text">Предметы на складе: {{ warehouse.name }}</h2>
@@ -27,10 +28,14 @@
                         Редактировать
                     </button>
 
-                        <form action="{% url 'delete_item' warehouse.id item.id %}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
-                            {% csrf_token %}
-                            <button type="submit" class="delete-btn">Удалить</button>
-                        </form>
+                        {# Изменено: теперь кнопка открывает модальное окно, а не вызывает confirm() #}
+                        <button 
+                            type="button" 
+                            class="delete-btn" 
+                            onclick="openDeleteConfirmModal('{{ warehouse.id|escapejs }}', '{{ item.id|escapejs }}', '{{ item.name|escapejs }}')"
+                        >
+                            Удалить
+                        </button>
                     </div>
 
                     <div id="edit-form-{{ item.id }}" class="edit-form" style="display:none;">
@@ -62,43 +67,95 @@
 
     <button id="add-item-btn" class="fixed-btn">Добавить предмет</button>
 
-    <div id="edit-item-modal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeEditModal()">&times;</span>
-        <h3>Редактировать предмет</h3>
-        <form id="edit-item-form" method="post">
-            {% csrf_token %}
-            
-            <label for="modal-item-name">Название:</label>
-            <input type="text" id="modal-item-name" name="name" maxlength="100" required>
-            
-            <label for="modal-item-description">Описание:</label>
-            <textarea id="modal-item-description" name="description" maxlength="100"></textarea>
-            
-            <label for="modal-item-quantity">Количество:</label>
-            <input type="number" id="modal-item-quantity" name="quantity" min="0" required>
-            
-            <button type="submit">Сохранить</button>
-            <button type="button" onclick="closeEditModal()">Отмена</button>
-        </form>
+    <!-- Модальное окно для добавления предмета -->
+    <div id="add-item-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAddItemModal()">&times;</span>
+            <h3>Добавить новый предмет</h3>
+            <form id="add-item-form" method="post" action="{% url 'add_item' warehouse.id %}">
+                {% csrf_token %}
+                
+                <label for="add-item-name">Название:</label>
+                <input type="text" id="add-item-name" name="name" maxlength="100" required>
+                
+                <label for="add-item-description">Описание:</label>
+                <textarea id="add-item-description" name="description" maxlength="100"></textarea>
+                
+                <label for="add-item-quantity">Количество:</label>
+                <input type="number" id="add-item-quantity" name="quantity" min="0" required>
+                
+                <button type="submit">Добавить</button>
+                <button type="button" onclick="closeAddItemModal()">Отмена</button>
+            </form>
+        </div>
     </div>
-    
+
+    <!-- Модальное окно для редактирования предмета -->
+    <div id="edit-item-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeEditModal()">&times;</span>
+            <h3>Редактировать предмет</h3>
+            <form id="edit-item-form" method="post">
+                {% csrf_token %}
+                
+                <label for="modal-item-name">Название:</label>
+                <input type="text" id="modal-item-name" name="name" maxlength="100" required>
+                
+                <label for="modal-item-description">Описание:</label>
+                <textarea id="modal-item-description" name="description" maxlength="100"></textarea>
+                
+                <label for="modal-item-quantity">Количество:</label>
+                <input type="number" id="modal-item-quantity" name="quantity" min="0" required>
+                
+                <button type="submit">Сохранить</button>
+                <button type="button" onclick="closeEditModal()">Отмена</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- НОВОЕ: Модальное окно для подтверждения удаления -->
+    <div id="delete-confirm-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeDeleteConfirmModal()">&times;</span>
+            <h3>Подтверждение удаления</h3>
+            <p id="delete-confirm-text">Вы уверены, что хотите удалить этот предмет? Это действие необратимо.</p>
+            
+            <form id="delete-item-form-submit" method="post" action="">
+                {% csrf_token %}
+                <button type="submit" class="confirm-delete-btn">Удалить</button>
+                <button type="button" onclick="closeDeleteConfirmModal()">Отмена</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 <script>
+    // Обработчик для кнопки "Добавить предмет"
     document.getElementById('add-item-btn').addEventListener('click', function() {
-        document.getElementById('add-item-form').style.display = 'block';
+        openAddItemModal();
     });
 
-    document.getElementById('cancel-btn').addEventListener('click', function() {
-        document.getElementById('add-item-form').style.display = 'none';
-    });
-
-    function confirmDelete() {
-        return confirm("Вы уверены, что хотите удалить этот предмет?");
+    // Функция для открытия модального окна добавления предмета
+    function openAddItemModal() {
+        const modal = document.getElementById('add-item-modal');
+        // Очищаем форму перед открытием
+        document.getElementById('add-item-form').reset();
+        modal.style.display = 'block';
     }
 
+    // Функция для закрытия модального окна добавления предмета
+    function closeAddItemModal() {
+        const modal = document.getElementById('add-item-modal');
+        modal.style.display = 'none';
+    }
+
+    // Функция для открытия модального окна редактирования предмета
     function openEditModal(warehouseId, itemId, name, description, quantity) {
+        // Закрываем все остальные модальные окна на всякий случай
+        closeAddItemModal();
+        closeDeleteConfirmModal();
+
         const modal = document.getElementById('edit-item-modal');
         const form = document.getElementById('edit-item-form');
         
@@ -106,26 +163,66 @@
         document.getElementById('modal-item-description').value = description;
         document.getElementById('modal-item-quantity').value = quantity;
 
+        // Устанавливаем action формы на нужный URL для редактирования
         const url = `/warehouse/${warehouseId}/items/edit/${itemId}/`;
         form.action = url;
         
         modal.style.display = 'block';
     }
 
+    // Функция для закрытия модального окна редактирования предмета
     function closeEditModal() {
-        document.getElementById('edit-item-modal').style.display = 'none';
+        const modal = document.getElementById('edit-item-modal');
+        modal.style.display = 'none';
     }
 
+    // НОВОЕ: Функция для открытия модального окна подтверждения удаления
+    function openDeleteConfirmModal(warehouseId, itemId, itemName) {
+        // Закрываем все остальные модальные окна на всякий случай
+        closeAddItemModal();
+        closeEditModal();
+
+        const modal = document.getElementById('delete-confirm-modal');
+        const form = document.getElementById('delete-item-form-submit');
+        const text = document.getElementById('delete-confirm-text');
+
+        // Устанавливаем текст подтверждения с названием предмета
+        text.innerHTML = `Вы уверены, что хотите удалить предмет **${itemName}**? Это действие необратимо.`;
+
+        // Устанавливаем action формы на нужный URL для удаления
+        const url = `/warehouse/${warehouseId}/items/delete/${itemId}/`;
+        form.action = url;
+
+        modal.style.display = 'block';
+    }
+
+    // НОВОЕ: Функция для закрытия модального окна подтверждения удаления
+    function closeDeleteConfirmModal() {
+        document.getElementById('delete-confirm-modal').style.display = 'none';
+    }
+
+    // Функция для подтверждения удаления (уже не используется, но оставлена на всякий случай)
+    // function confirmDelete() {
+    //     return confirm("Вы уверены, что хотите удалить этот предмет?");
+    // }
+
+    // Закрытие модальных окон при клике вне их содержимого
     window.onclick = function(event) {
-        const modal = document.getElementById('edit-item-modal');
-        if (event.target == modal) {
+        const addItemModal = document.getElementById('add-item-modal');
+        const editItemModal = document.getElementById('edit-item-modal');
+        const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+        
+        if (event.target == addItemModal) {
+            closeAddItemModal();
+        }
+        if (event.target == editItemModal) {
             closeEditModal();
+        }
+        if (event.target == deleteConfirmModal) {
+            closeDeleteConfirmModal();
         }
     }
 
-
 </script>
 
-
-</div>
 {% endblock %}

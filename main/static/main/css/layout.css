@@ -46,6 +46,11 @@ header {
     font-size: 1.8rem;
 }
 
+.logo-link {
+    text-decoration: none;
+     color: white;
+}
+
 .auth-links a {
     color: white;
     text-decoration: none;

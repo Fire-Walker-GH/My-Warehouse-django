@@ -12,8 +12,10 @@
     <header>
         <div class="container header-content">
             <div class="logo">
+                <a href="{% url 'home' %}" class="logo-link">
                 <span class="logo-icon">📦</span>
                 <span>Мой Склад</span>
+            </a>
             </div>
             <nav class="auth-links">
                 {% if request.user.is_authenticated %}
