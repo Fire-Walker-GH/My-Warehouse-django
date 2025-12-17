@@ -3,7 +3,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
 }
 
 .login-container form {
@@ -11,28 +10,37 @@
     max-width: 400px; 
     padding: 20px;
     border-radius: 8px;
+    text-align: left; 
 }
 
 .login-container h2 {
     font-size: 34px;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-top: 20px; 
 }
 
 .login-container h3 {
     font-size: 18px;
-    margin-bottom: 20px;
+}
+
+.login-container form p {
+    margin-bottom: 15px; 
 }
 
 .login-container label {
     font-size: 20px;
+    display: block; 
+    margin-bottom: 5px; 
 }
 
 .login-container input{
-    padding: 5px; /* Увеличить внутренний отступ */
-    border: 2px solid #ccc; /* Изменить границу */
+    padding: 10px; 
+    border: 2px solid #ccc; 
+    width: 100%;
+    box-sizing: border-box; 
+    border-radius: 4px;
+    font-size: 24px;
 }
-
-
 
 .login-container button {
     margin-top: 15px;
@@ -42,6 +50,8 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    font-size: 20px;
 }
 
 .login-container button:hover {

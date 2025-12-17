@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from .models import Warehouse, Item
 from django.contrib.auth.decorators import login_required
-from .forms import ItemForm, CustomAuthenticationForm
+from .forms import ItemForm, CustomAuthenticationForm, CustomRegistrationForm
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -23,13 +23,13 @@ def home(request):
 
 def user_register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)  
             return redirect('home') 
     else:
-        form = UserCreationForm() 
+        form = CustomRegistrationForm() 
     return render(request, 'main/register.html', {'form': form})
 
 def user_login(request):
@@ -74,60 +74,45 @@ def items_list(request, warehouse_id):
     if warehouse.user != request.user:
         raise PermissionDenied("У вас нет доступа к этому складу")
     
-    # 1. Получаем базовый QuerySet предметов для склада
     all_items = Item.objects.filter(warehouse=warehouse)
     
-    # 2. ЛОГИКА ПОИСКА
     search_query = request.GET.get('q')
     if search_query:
-        # Фильтруем QuerySet по названию, используя icontains (регистронезависимый поиск)
         all_items = all_items.filter(name__icontains=search_query)
         
-    # Сортируем QuerySet (важно делать это после фильтрации)
     all_items = all_items.order_by('name')
     
-    # 3. ЛОГИКА ПАГИНАЦИИ
-    items_per_page = 4 # 4 предмета на страницу
+    items_per_page = 4
     paginator = Paginator(all_items, items_per_page)
     
-    # Получаем номер текущей страницы из GET-параметра 'page'
     page_number = request.GET.get('page', 1)
     
     try:
-        # Получаем объект Page для запрошенной страницы
         page_obj = paginator.page(page_number)
     except PageNotAnInteger:
-        # Если номер страницы не целое число, показываем первую страницу
         page_obj = paginator.page(1)
     except EmptyPage:
-        # Если номер страницы вне диапазона, показываем последнюю
         page_obj = paginator.page(paginator.num_pages)
     
-    # 4. КОНТЕКСТ
     context = {
         'warehouse': warehouse,
         'page_obj': page_obj, 
         'items': page_obj.object_list, 
-        'search_query': search_query or '', # Передаем поисковый запрос обратно в шаблон
+        'search_query': search_query or '', 
     }
     
     return render(request, 'main/items_list.html', context)
 
 def add_item(request, warehouse_id):
-    # Эта функция должна обрабатывать только POST-запросы
     if request.method == 'POST':
-        # Используем get_object_or_404 для лучшей обработки ошибок
         warehouse = get_object_or_404(Warehouse, id=warehouse_id)
         
-        # Используем имена полей из формы модального окна, которую я вам предоставил (name, description, quantity)
         name = request.POST.get('name')
         description = request.POST.get('description')
         quantity = request.POST.get('quantity')
 
-        # Базовая валидация
         if name and quantity:
             try:
-                # Преобразование количества в целое число
                 quantity = int(quantity)
                 
                 Item.objects.create(
@@ -144,10 +129,8 @@ def add_item(request, warehouse_id):
         else:
             messages.error(request, 'Пожалуйста, заполните все обязательные поля (Название и Количество).')
 
-        # После обработки запроса всегда перенаправляем пользователя обратно на страницу списка
         return redirect('items_list', warehouse_id=warehouse_id)
     
-    # Если кто-то попытается перейти по этому URL через GET-запрос, перенаправляем его
     return redirect('items_list', warehouse_id=warehouse_id)
 
 def delete_item(request, warehouse_id, item_id):

@@ -3,7 +3,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'main/css/items_list.css' %}">
-{# Предполагается, что стили для модальных окон находятся в items_list.css или подключены отдельно #}
+
 
 <div class="items-list">
     <div class="items-list-header">
@@ -36,7 +36,7 @@
                         Редактировать
                     </button>
 
-                        {# Изменено: теперь кнопка открывает модальное окно, а не вызывает confirm() #}
+                        
                         <button 
                             type="button" 
                             class="delete-btn" 
@@ -75,7 +75,7 @@
 
     <button id="add-item-btn" class="fixed-btn">Добавить предмет</button>
 
-    <!-- Модальное окно для добавления предмета -->
+    
     <div id="add-item-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" onclick="closeAddItemModal()">&times;</span>
@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно для редактирования предмета -->
+    
     <div id="edit-item-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" onclick="closeEditModal()">&times;</span>
@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <!-- НОВОЕ: Модальное окно для подтверждения удаления -->
+    
     <div id="delete-confirm-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" onclick="closeDeleteConfirmModal()">&times;</span>
@@ -164,12 +164,12 @@
 </div>
 
 <script>
-    // Обработчик для кнопки "Добавить предмет"
+    
     document.getElementById('add-item-btn').addEventListener('click', function() {
         openAddItemModal();
     });
 
-    // Функция для открытия модального окна добавления предмета
+    
     function openAddItemModal() {
         const modal = document.getElementById('add-item-modal');
         // Очищаем форму перед открытием
@@ -177,15 +177,15 @@
         modal.style.display = 'block';
     }
 
-    // Функция для закрытия модального окна добавления предмета
+    
     function closeAddItemModal() {
         const modal = document.getElementById('add-item-modal');
         modal.style.display = 'none';
     }
 
-    // Функция для открытия модального окна редактирования предмета
+    
     function openEditModal(warehouseId, itemId, name, description, quantity) {
-        // Закрываем все остальные модальные окна на всякий случай
+        
         closeAddItemModal();
         closeDeleteConfirmModal();
 
@@ -196,22 +196,22 @@
         document.getElementById('modal-item-description').value = description;
         document.getElementById('modal-item-quantity').value = quantity;
 
-        // Устанавливаем action формы на нужный URL для редактирования
+        
         const url = `/warehouse/${warehouseId}/items/edit/${itemId}/`;
         form.action = url;
         
         modal.style.display = 'block';
     }
 
-    // Функция для закрытия модального окна редактирования предмета
+    
     function closeEditModal() {
         const modal = document.getElementById('edit-item-modal');
         modal.style.display = 'none';
     }
 
-    // НОВОЕ: Функция для открытия модального окна подтверждения удаления
+    
     function openDeleteConfirmModal(warehouseId, itemId, itemName) {
-        // Закрываем все остальные модальные окна на всякий случай
+       
         closeAddItemModal();
         closeEditModal();
 
@@ -219,27 +219,21 @@
         const form = document.getElementById('delete-item-form-submit');
         const text = document.getElementById('delete-confirm-text');
 
-        // Устанавливаем текст подтверждения с названием предмета
+       
         text.innerHTML = `Вы уверены, что хотите удалить предмет **${itemName}**? Это действие необратимо.`;
 
-        // Устанавливаем action формы на нужный URL для удаления
+        
         const url = `/warehouse/${warehouseId}/items/delete/${itemId}/`;
         form.action = url;
 
         modal.style.display = 'block';
     }
 
-    // НОВОЕ: Функция для закрытия модального окна подтверждения удаления
+    
     function closeDeleteConfirmModal() {
         document.getElementById('delete-confirm-modal').style.display = 'none';
     }
 
-    // Функция для подтверждения удаления (уже не используется, но оставлена на всякий случай)
-    // function confirmDelete() {
-    //     return confirm("Вы уверены, что хотите удалить этот предмет?");
-    // }
-
-    // Закрытие модальных окон при клике вне их содержимого
     window.onclick = function(event) {
         const addItemModal = document.getElementById('add-item-modal');
         const editItemModal = document.getElementById('edit-item-modal');

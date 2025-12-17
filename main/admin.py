@@ -3,10 +3,10 @@ from .models import Warehouse, Item
 
 @admin.register(Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'user')  # Поля, которые будут отображаться в списке
-    list_filter = ('user',)  # Фильтры по полям
-    search_fields = ('name', 'address')  # Поля для поиска
-    ordering = ('name',)  # Сортировка по умолчанию
+    list_display = ('name', 'address', 'user') 
+    list_filter = ('user',) 
+    search_fields = ('name', 'address')  
+    ordering = ('name',)  
 
 @admin.register(Item)
 class ItemsAdmin(admin.ModelAdmin):

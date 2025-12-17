@@ -3,21 +3,39 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* Высота контейнера на весь экран */
-    text-align: center;
 }
 
 .registration-container form{
     width: 100%;
     max-width: 400px; 
-    padding: 20px;
-    border: 1px solid #ccc;
+    padding: 10px;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    text-align: left; 
 }
 
 .registration-container h2{
-    margin-bottom: 20px;
+    font-size: 34px;
+    text-align: center;
+    margin-top: 20px; 
+}
+
+.registration-container form p {
+    margin-bottom: 15px; 
+}
+
+.registration-container label {
+    font-size: 20px;
+    display: block; 
+    margin-bottom: 5px; 
+}
+
+.registration-container input{
+    padding: 10px; 
+    border: 2px solid #ccc; 
+    width: 100%;
+    box-sizing: border-box; 
+    border-radius: 4px;
+    font-size: 24px;
 }
 
 .registration-container button{
@@ -28,6 +46,8 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%; 
+    font-size: 20px;
 }
 
 .registration-container button:hover{
