@@ -16,6 +16,16 @@
     margin: 0 auto 2rem;
 }
 
+.hero, .how-it-works {
+    width: 100%;
+}
+
+.hero-content, .how-it-works-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
 
 .features {
     padding: 4rem 0;
@@ -65,15 +75,16 @@
 
 .steps {
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 2rem;
+    justify-content: space-between;
+    flex-wrap: nowrap; 
+    gap: 1.5rem;
+    width: 100%;
 }
 
 .step {
     text-align: center;
     flex: 1;
-    min-width: 250px;
+    min-width: 0; 
 }
 
 .step-number {
@@ -105,7 +116,16 @@
     background-color: #f9f9f9;
 }
 
+h2 {
+    text-align: center;
+    width: 100%;
+    margin: 10px 0;
+}
+
 .add-warehouse-btn {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -113,6 +133,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    text-decoration: none;
 }
 
 .add-warehouse-btn:hover {
@@ -139,4 +160,11 @@
 }
 
 
-
+@media (max-width: 768px) {
+    .steps {
+        flex-wrap: wrap;
+    }
+    .step {
+        min-width: 250px;
+    }
+}
