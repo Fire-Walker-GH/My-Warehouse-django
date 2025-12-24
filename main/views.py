@@ -8,17 +8,20 @@ from django.contrib.auth.decorators import login_required
 from .forms import ItemForm, CustomAuthenticationForm, CustomRegistrationForm
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
-
-
+from django.db.models import Sum, Count
 
 
 def home(request):
+    user_warehouses = None
+    
     if request.user.is_authenticated:
-        user_warehouses = Warehouse.objects.filter(user_id=request.user.id)
-    else:
-        user_warehouses = None
-
+        user_warehouses = Warehouse.objects.filter(
+            user_id=request.user.id
+        ).annotate(
+            total_quantity=Sum('items__quantity'),
+            unique_item_count=Count('items') 
+        )
+    
     return render(request, 'main/home.html', {'user_warehouses': user_warehouses})
 
 def user_register(request):
@@ -66,6 +69,15 @@ def add_warehouse(request):
         return redirect('home') 
 
     return render(request, 'main/add_warehouse.html')
+
+def delete_warehouse(request, warehouse_id):
+    warehouse = get_object_or_404(Warehouse, id=warehouse_id, user_id=request.user.id)
+    
+    if request.method == 'POST':
+        warehouse.delete()
+        return redirect('home') 
+    
+    return redirect('home') 
 
 
 def items_list(request, warehouse_id):

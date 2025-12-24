@@ -13,8 +13,13 @@
                 <div class="warehouse-item">
                     <h3 class="warehouse-name">{{ warehouse.name }}</h3>
                     <p class="warehouse-address">{{ warehouse.address }}</p>
-                    <p class="warehouse-products-quantity"></p>
+                    <p class="warehouse-products-quantity">Общее количество товаров: {{ warehouse.total_quantity|default:"0" }}</p>
+                    <p class="warehouse-unique-items-count">Количество видов товара: {{ warehouse.unique_item_count|default:"0" }}</p>
                     <a href="{% url 'items_list' warehouse_id=warehouse.id %}" class="open-the-warehouse-bth">Перейти на склад</a>
+                    <button type="button" class="delete-warehouse-btn" 
+                        onclick="openDeleteModal('{{ warehouse.id }}', '{{ warehouse.name }}')">
+                        Удалить склад
+                    </button>
                 </div>
             {% endfor %}
         </div>
@@ -75,4 +80,22 @@
 {% endif %}
 
 
+<div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+        <h3>Подтверждение удаления</h3>
+        <p id="modalText">Вы уверены, что хотите удалить склад?</p>
+        
+        <div class="modal-buttons">
+            <form id="deleteForm" method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm">Да, удалить</button>
+            </form>
+            <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Нет, отмена</button>
+        </div>
+        </div>
+</div>
+
+<script src="{% static 'main/js/home.js' %}"></script>
+
 {% endblock %}
+
