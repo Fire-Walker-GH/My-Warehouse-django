@@ -3,26 +3,44 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from .models import Warehouse, Item
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from .models import Warehouse, Item, WarehouseAccess
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .forms import ItemForm, CustomAuthenticationForm, CustomRegistrationForm
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Sum, Count
+import json
 
 
 def home(request):
-    user_warehouses = None
-    
     if request.user.is_authenticated:
-        user_warehouses = Warehouse.objects.filter(
-            user_id=request.user.id
-        ).annotate(
-            total_quantity=Sum('items__quantity'),
-            unique_item_count=Count('items') 
-        )
-    
-    return render(request, 'main/home.html', {'user_warehouses': user_warehouses})
+        user_warehouses = Warehouse.objects.filter(user=request.user)
+        for warehouse in user_warehouses:
+            accesses = WarehouseAccess.objects.filter(warehouse=warehouse).select_related('user')
+            users_list = [
+                {'id': acc.user.id, 'username': acc.user.username, 'role': acc.get_role_display()}
+                for acc in accesses
+            ]
+            warehouse.shared_users_json = json.dumps(users_list)
+            warehouse.shared_count = len(users_list)
+        
+        shared_accesses = WarehouseAccess.objects.filter(user=request.user).select_related('warehouse', 'warehouse__user')
+        shared_warehouses = []
+        for access in shared_accesses:
+            shared_warehouses.append({
+                'warehouse': access.warehouse,
+                'role': access.get_role_display(),
+                'owner': access.warehouse.user.username
+            })
+            
+        return render(request, 'main/home.html', {
+            'user_warehouses': user_warehouses,
+            'shared_warehouses': shared_warehouses
+        })
+    return render(request, 'main/home.html')
 
 def user_register(request):
     if request.method == 'POST':
@@ -78,6 +96,50 @@ def delete_warehouse(request, warehouse_id):
         return redirect('home') 
     
     return redirect('home') 
+
+@login_required
+@require_POST
+def add_shared_user_to_warehouse(request, warehouse_id):
+    warehouse = get_object_or_404(Warehouse, id=warehouse_id)
+
+    if warehouse.user != request.user:
+        return JsonResponse({"status": "error", "message": "У вас нет прав для изменения доступа."}, status=403)
+
+    username = request.POST.get("login")
+    role = request.POST.get("role")
+
+    if not username:
+        return JsonResponse({"status": "error", "message": "Логин обязателен."}, status=400)
+
+    try:
+        target_user = User.objects.get(username=username)
+        
+        if target_user == request.user:
+            return JsonResponse({"status": "error", "message": "Нельзя добавить владельца."}, status=400)
+        
+        WarehouseAccess.objects.update_or_create(
+            warehouse=warehouse,
+            user=target_user,
+            defaults={"role": role}
+        )
+        return JsonResponse({"status": "success", "message": f"Пользователь {username} добавлен."})
+            
+    except User.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Пользователь не найден."}, status=404)
+    
+@login_required
+@require_POST
+def remove_shared_user(request, warehouse_id, user_id):
+    warehouse = get_object_or_404(Warehouse, id=warehouse_id)
+    
+ 
+    if warehouse.user != request.user:
+        return JsonResponse({"status": "error", "message": "У вас нет прав."}, status=403)
+    
+    
+    WarehouseAccess.objects.filter(warehouse=warehouse, user_id=user_id).delete()
+    
+    return JsonResponse({"status": "success"})
 
 
 def items_list(request, warehouse_id):

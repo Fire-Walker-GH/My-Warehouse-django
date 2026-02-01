@@ -15,11 +15,21 @@
                     <p class="warehouse-address">{{ warehouse.address }}</p>
                     <p class="warehouse-products-quantity">Общее количество товаров: {{ warehouse.total_quantity|default:"0" }}</p>
                     <p class="warehouse-unique-items-count">Количество видов товара: {{ warehouse.unique_item_count|default:"0" }}</p>
-                    <a href="{% url 'items_list' warehouse_id=warehouse.id %}" class="open-the-warehouse-bth">Перейти на склад</a>
-                    <button type="button" class="delete-warehouse-btn" 
-                        onclick="openDeleteModal('{{ warehouse.id }}', '{{ warehouse.name }}')">
-                        Удалить склад
-                    </button>
+                    
+                    <div class="warehouse-actions">
+                        <a href="{% url 'items_list' warehouse_id=warehouse.id %}" class="open-the-warehouse-bth">Перейти на склад</a>
+                        <button type="button" class="delete-warehouse-btn" 
+                            onclick="openDeleteModal('{{ warehouse.id }}', '{{ warehouse.name }}')">
+                            Удалить склад
+                        </button>
+                    </div>
+                    
+                    <div class="warehouse-secondary-actions">
+                        <button type="button" class="share-access-btn" onclick="openShareModal('{{ warehouse.id }}', '{{ warehouse.name }}', '{{ warehouse.shared_count }}')">Совместный доступ</button>
+                    </div>
+                    <script type="application/json" id="users-data-{{ warehouse.id }}">
+                            {{ warehouse.shared_users_json|safe }}
+                    </script>
                 </div>
             {% endfor %}
         </div>
@@ -27,6 +37,11 @@
         <h2>У вас нет добавленных складов</h2>
         <a href="{% url 'add_warehouse' %}" class="add-warehouse-btn">Добавить</a>
     {% endif %}
+
+    <div class="shared-warehouses-section">
+        <h2>Совместные склады</h2>
+    </div>
+
 {% else %} 
     <section class="hero">
         <div class="container">
@@ -93,6 +108,51 @@
             <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Нет, отмена</button>
         </div>
         </div>
+</div>
+
+<div id="shareModal" class="modal-overlay">
+    <div class="modal-content share-modal-content">
+        <h3 id="shareModalTitle">Совместный доступ</h3>
+        <div class="share-modal-body">
+            <div class="share-users-list">
+                <h4>Пользователи с доступом: <span id="sharedUsersCount">0</span></h4>
+                <ul id="usersList" style="list-style: none; padding: 0; margin-top: 10px;">
+                   
+                </ul>
+            </div>
+            <div class="share-actions">
+                <button type="button" class="btn-add-user" onclick="openAddUserModal()">Добавить</button>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-cancel" onclick="closeShareModal()">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<div id="addUserModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Добавить пользователя</h3>
+        <form id="addUserForm" class="add-user-form" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="userLogin">Логин пользователя:</label>
+                <input type="text" id="userLogin" name="login" placeholder="Введите логин" required>
+                <div id="userLoginError" style="color: #dc3545; font-size: 0.85em; margin-top: 5px; display: none;"></div>
+            </div>
+            <div class="form-group">
+                <label for="userRole">Роль:</label>
+                <select id="userRole" name="role">
+                    <option value="viewer">Наблюдатель</option>
+                    <option value="editor">Редактор</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-confirm">Подтвердить</button>
+                <button type="button" class="btn-cancel" onclick="closeAddUserModal()">Отмена</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script src="{% static 'main/js/home.js' %}"></script>
