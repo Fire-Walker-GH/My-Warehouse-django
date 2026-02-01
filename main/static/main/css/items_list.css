@@ -5,17 +5,16 @@
 }
 
 .items-list-header {
-    display: flex; /* Включаем Flexbox */
-    justify-content: space-between; /* Разносим элементы по краям */
-    align-items: center; /* Выравниваем элементы по вертикали */
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
     margin-bottom: 20px;
     padding-top: 10px;
 }
 
-/* 2. Стилизация формы поиска */
 .search-form {
     display: flex;
-    gap: 5px; /* Небольшой отступ между полем ввода и кнопкой */
+    gap: 5px; 
 }
 
 .search-form input[type="text"] {
@@ -23,7 +22,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    width: 200px; /* Фиксированная ширина для поля ввода */
+    width: 200px; 
 }
 
 .search-form button {
@@ -43,8 +42,8 @@
 
 .items-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Один элемент в ряду */
-    gap: 20px; /* Отступ между элементами */
+    grid-template-columns: 1fr; 
+    gap: 20px; 
     margin-top: 20px;
 }
 
@@ -71,11 +70,11 @@
 }
 
 .card-buttons {
-    position: absolute; /* Фиксированное позиционирование внутри карточки */
-    right: 10px; /* Отступ справа */
-    bottom: 10px; /* Отступ снизу */
+    position: absolute; 
+    right: 10px; 
+    bottom: 10px; 
     display: flex;
-    gap: 10px; /* Отступ между кнопками */
+    gap: 10px; 
 }
 
 .card-buttons button {
@@ -88,7 +87,7 @@
 }
 
 .card-buttons .edit-btn {
-    background-color: #ffc107; /* Желтый цвет для кнопки "Редактировать" */
+    background-color: #ffc107; 
     color: #000;
 }
 
@@ -97,7 +96,7 @@
 }
 
 .card-buttons .delete-btn {
-    background-color: #be1010; /* Голубой цвет для кнопки "Изменить" */
+    background-color: #be1010; 
     color: #fff;
 }
 
@@ -112,30 +111,8 @@
     margin-top: 20px;
 }
 
-/* Фиксированная кнопка */
-.fixed-btn {
-    position: fixed;
-    right: 15px;
-    bottom: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s;
-}
-
-.fixed-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Контейнер формы */
 .form-container {
-    display: none; /* Форма скрыта по умолчанию */
+    display: none; 
     position: fixed;
     right: 20px;
     bottom: 80px;
@@ -147,7 +124,6 @@
     z-index: 1000;
 }
 
-/* Стили для формы */
 .form-container h3 {
     margin-top: 0;
     font-size: 20px;
@@ -337,16 +313,18 @@
     transform: translateY(0);
 }
 
-/* Кнопка "Добавить предмет" */
 .fixed-btn {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 15px 30px;
+    top: 25%; 
+    right: 20px;
+    padding: 15px 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 30px;
+    max-width: 125px;
+    white-space: normal; 
+    text-align: center;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -365,7 +343,6 @@
     transform: translateY(0);
 }
 
-/* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
     .modal-content {
         width: 95%;
@@ -383,38 +360,33 @@
 
 .pagination-container {
     display: flex;
-    justify-content: space-between; /* Разносит элементы по краям */
-    align-items: center; /* Выравнивает по вертикали */
+    justify-content: space-between; 
+    align-items: center; 
     
     margin-top: 30px; 
-    padding: 20px 0; /* Убираем горизонтальный padding, чтобы кнопки были у краев */
+    padding: 20px 0; 
     border-top: 1px solid #e0e0e0; 
     
-    /* Ограничиваем ширину, чтобы центрирование работало корректно */
+
     max-width: 1200px; 
     margin-left: auto;
     margin-right: auto;
 }
 
-/* 2. Контейнеры для кнопок */
+
 .pagination-left {
-    /* Выравнивание кнопок по левому краю */
     text-align: left;
 }
 
 .pagination-right {
-    /* Выравнивание кнопок по правому краю */
     text-align: right;
 }
 
-/* 3. Контейнер для номера страницы */
 .pagination-center {
-    /* Номер страницы будет автоматически центрирован благодаря space-between */
-    flex-grow: 1; /* Позволяет центру занять доступное пространство */
+    flex-grow: 1; 
     text-align: center;
 }
 
-/* 4. Общие стили для ссылок (кнопок) */
 .pagination-container a {
     display: inline-block;
     padding: 8px 15px;
@@ -431,12 +403,10 @@
     color: white;
 }
 
-/* 5. Стилизация текущего номера страницы */
 .pagination-center .current {
     font-weight: bold;
     color: #333;
     padding: 8px 15px;
-    /* Убираем рамку и фон, чтобы это был просто центрированный текст */
     border: none;
     background: none;
 }

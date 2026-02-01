@@ -37,4 +37,5 @@ class CustomRegistrationForm(UserCreationForm):
     
     error_messages = {
         'password_mismatch': 'Пароли не совпадают!',
+        'invalid_login': 'Пользователь не найден!',
     }

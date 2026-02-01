@@ -136,6 +136,10 @@ h2 {
     text-decoration: none;
 }
 
+.warehouse-unique-items-count {
+    margin-bottom: 10px;
+}
+
 .add-warehouse-btn:hover {
     background-color: #0056b3;
 }
@@ -145,8 +149,20 @@ h2 {
     color: white; 
     border: none; 
     padding: 5px 10px; 
-    cursor: pointer; 
+    cursor: pointer;
+    font-size: 16px; 
     border-radius: 4px;
+}
+
+.open-the-warehouse-bth {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
 }
 
 .warehouse-name {
@@ -157,16 +173,6 @@ h2 {
     margin: 20px;
 }
 
-.open-the-warehouse-bth {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-decoration: none;
-}
 
 .modal-overlay {
     display: none; 

@@ -151,10 +151,6 @@ def delete_item(request, warehouse_id, item_id):
     return redirect('items_list', warehouse_id=warehouse_id)
 
 def edit_item(request, warehouse_id, item_id):
-    """
-    Handles the editing of an existing Item.
-    Requires both warehouse_id and item_id to ensure the item belongs to the warehouse.
-    """
     item = get_object_or_404(Item, pk=item_id, warehouse_id=warehouse_id)
     
     if request.method == 'POST':
